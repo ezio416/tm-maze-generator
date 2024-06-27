@@ -2,16 +2,13 @@
 // m 2024-06-27
 
 Maze@[]      mazes;
-// vec4[]       randomColors;
-const float  scale = UI::GetScale();
-const string title = "\\$FFF" + Icons::ThLarge + "\\$G Maze Generator";
+const string savedFile = IO::FromStorageFolder("saved.json");
+const float  scale     = UI::GetScale();
+const string title     = "\\$FFF" + Icons::ThLarge + "\\$G Maze Generator";
 
 void Main() {
-    LoadMazes("test.json");
+    LoadMazes(savedFile);
     ChangeFont();
-
-    // for (uint i = 0; i < 64; i++)
-    //     randomColors.InsertLast(RandomColor());
 }
 
 void OnSettingsChanged() {
@@ -61,14 +58,15 @@ void Render() {
         S_Height = Round(size.y);
     }
 
-    // background
-    nvg::BeginPath();
-    nvg::Rect(
-        vec2(x, y),
-        vec2(w, h)
-    );
-    nvg::FillColor(S_BackColor);
-    nvg::Fill();
+    if (S_Background) {
+        nvg::BeginPath();
+        nvg::Rect(
+            vec2(x, y),
+            vec2(w, h)
+        );
+        nvg::FillColor(S_BackColor);
+        nvg::Fill();
+    }
 
     const float blockWidth  = float(w) / S_DimensionX;
     const float blockHeight = float(h) / S_DimensionY;

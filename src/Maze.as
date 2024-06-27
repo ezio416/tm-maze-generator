@@ -32,9 +32,41 @@ class Maze {
             data.InsertLast(datum);
         }
     }
+
+    Json::Value@ ToJson() {
+        Json::Value@ json = Json::Object();
+
+        json["name"] = name;
+        json["type"] = int(type);
+
+        Json::Value@ size = Json::Array();
+        size.Add(Json::Value(width));
+        size.Add(Json::Value(height));
+        json["size"] = size;
+
+        Json::Value@ data = Json::Array();
+        for (uint i = 0; i < this.data.Length; i++) {
+            Json::Value@ datum = Json::Array();
+            for (uint j = 0; j < uint(type == MazeType::Blocked ? 2 : 4); j++)
+                datum.Add(Json::Value(this.data[i][j]));
+                data.Add(datum);
+        }
+        json["data"] = data;
+
+        return json;
+    }
+
+    string ToString() {
+        return Json::Write(ToJson());
+    }
 }
 
 void LoadMazes(const string &in path) {
+    if (!IO::FileExists(path)) {
+        warn("file not found: " + path);
+        return;
+    }
+
     Json::Value@ loaded = Json::FromFile(path);
 
     if (loaded.GetType() != Json::Type::Array) {
@@ -51,13 +83,28 @@ void LoadMazes(const string &in path) {
 
     for (uint i = 0; i < loaded.Length; i++) {
         try {
-            mazes.InsertLast(Maze(loaded[i]));
+            Maze@ maze = Maze(loaded[i]);
+            trace("loaded maze: " + tostring(maze));
+            mazes.InsertLast(maze);
         } catch {
             warn(getExceptionInfo());
         }
     }
 
-    print("mazes loaded: " + mazes.Length);
+    trace("mazes loaded: " + mazes.Length);
+}
+
+void SaveMazes(const string &in path) {
+    Json::Value@ saved = Json::Array();
+
+    for (uint i = 0; i < mazes.Length; i++) {
+        Maze@ maze = mazes[i];
+        saved.Add(maze.ToJson());
+    }
+
+    Json::ToFile(path, saved);
+
+    trace("mazes saved");
 }
 
 bool VerifyMaze(Json::Value@ maze) {
@@ -132,7 +179,7 @@ bool VerifyMaze(Json::Value@ maze) {
                 if ((z == x && w == y) || (z > x && w > y))
                     return false;
 
-                const string key = tostring(x) + y + z + w;
+                const string key = tostring(x) + "," + y + "," + z + "," + w;
                 if (seen.Exists(key))
                     return false;
 

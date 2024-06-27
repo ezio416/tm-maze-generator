@@ -12,10 +12,13 @@ bool S_HideWithOP = false;
 
 
 [Setting category="Style" name="Grid dimension X" min=1 max=100]
-uint S_DimensionX = 4;
+uint S_DimensionX = 5;
 
 [Setting category="Style" name="Grid dimension Y" min=1 max=100]
-uint S_DimensionY = 4;
+uint S_DimensionY = 5;
+
+[Setting category="Style" name="Show background"]
+bool S_Background = true;
 
 [Setting category="Style" name="Background color" color]
 vec4 S_BackColor = vec4(0.0f, 0.0f, 0.0f, 0.7f);
