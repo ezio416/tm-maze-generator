@@ -198,6 +198,10 @@ bool VerifyMaze(Json::Value@ maze) {
     return false;
 }
 
+bool VerifyPerfect(Maze@ maze) {
+    return false;
+}
+
 uint WallCount(int x, int y) {
     if (x < 1 || y < 1)
         return 0;

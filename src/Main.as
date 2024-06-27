@@ -10,9 +10,13 @@ void Main() {
     LoadMazes(savedFile);
     ChangeFont();
 
-    Maze@ random = Generator::Random(MazeType::Blocked, 5, 5);
+    // Maze@ random = Generator::Random(MazeType::Blocked, 5, 5);
+    // print(random);
+    // mazes[0] = random;
+
+    Maze@ random = Generator::Random(MazeType::Walled, 5, 5);
     print(random);
-    mazes[0] = random;
+    mazes[1] = random;
 }
 
 void OnSettingsChanged() {
@@ -108,6 +112,7 @@ void Render() {
         nvg::StrokeColor(S_WallColor);
         nvg::BeginPath();
 
+        // vertical
         for (uint i = 1; i < maze.width; i++) {
             for (uint j = 0; j < maze.height; j++) {
                 if (maze.data.Find({ i - 1, j, i, j }) == -1)
@@ -119,6 +124,7 @@ void Render() {
             }
         }
 
+        // horizontal
         for (uint i = 0; i < maze.width; i++) {
             for (uint j = 1; j < maze.height; j++) {
                 if (maze.data.Find({ i, j - 1, i, j }) == -1)

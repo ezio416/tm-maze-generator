@@ -12,13 +12,23 @@ namespace Generator {
             for (uint i = 0; i < width; i++) {
                 for (uint j = 0; j < height; j++) {
                     if (Math::Rand(0.0f, 1.0f) < percentChance)
-                        maze.data.InsertLast({i, j});
+                        maze.data.InsertLast({ i, j });
                 }
             }
         } else {
-            for (uint i = 0; i < width; i++) {
+            // vertical
+            for (uint i = 1; i < width; i++) {
                 for (uint j = 0; j < height; j++) {
-                    ;
+                    if (Math::Rand(0.0f, 1.0f) < percentChance)
+                        maze.data.InsertLast({ i - 1, j, i, j });
+                }
+            }
+
+            // horizontal
+            for (uint i = 0; i < width; i++) {
+                for (uint j = 1; j < height; j++) {
+                    if (Math::Rand(0.0f, 1.0f) < percentChance)
+                        maze.data.InsertLast({ i, j - 1, i, j });
                 }
             }
         }
