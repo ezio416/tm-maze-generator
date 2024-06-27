@@ -91,7 +91,7 @@ void Render() {
 
         for (uint i = 1; i < maze.width; i++) {
             for (uint j = 0; j < maze.height; j++) {
-                if (maze.data.Find({ i - 1, j, i, j }) > -1)
+                if (maze.data.Find({ i - 1, j, i, j }) == -1)
                     continue;
 
                 const float lineX = x + blockWidth * i;
@@ -102,7 +102,7 @@ void Render() {
 
         for (uint i = 0; i < maze.width; i++) {
             for (uint j = 1; j < maze.height; j++) {
-                if (maze.data.Find({ i, j - 1, i, j }) > -1)
+                if (maze.data.Find({ i, j - 1, i, j }) == -1)
                     continue;
 
                 const float lineY = y + blockHeight * j;
