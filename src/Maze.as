@@ -14,6 +14,11 @@ class Maze {
     uint     width;
 
     Maze() { }
+    Maze(MazeType type, uint width, uint height) {
+        this.type   = type;
+        this.width  = width;
+        this.height = height;
+    }
     Maze(Json::Value@ maze) {
         if (!VerifyMaze(maze))
             throw("invalid maze");

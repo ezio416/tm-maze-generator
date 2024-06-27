@@ -9,6 +9,10 @@ const string title     = "\\$FFF" + Icons::ThLarge + "\\$G Maze Generator";
 void Main() {
     LoadMazes(savedFile);
     ChangeFont();
+
+    Maze@ random = Generator::Random(MazeType::Blocked, 5, 5);
+    print(random);
+    mazes[0] = random;
 }
 
 void OnSettingsChanged() {
@@ -59,21 +63,30 @@ void Render() {
     }
 
     if (S_Background) {
+        nvg::FillColor(S_BackColor);
         nvg::BeginPath();
         nvg::Rect(
             vec2(x, y),
             vec2(w, h)
         );
-        nvg::FillColor(S_BackColor);
         nvg::Fill();
     }
 
-    const float blockWidth  = float(w) / S_DimensionX;
-    const float blockHeight = float(h) / S_DimensionY;
+    uint dimX = S_DimensionX;
+    uint dimY = S_DimensionY;
+
+    float blockWidth  = float(w) / dimX;
+    float blockHeight = float(h) / dimY;
 
     // blocks/walls
     if (S_Type == MazeType::Blocked) {
         Maze@ maze = mazes[0];
+
+        dimX = maze.width;
+        dimY = maze.height;
+
+        blockWidth  = float(w) / dimX;
+        blockHeight = float(h) / dimY;
 
         nvg::FillColor(S_BlockColor);
 
@@ -84,6 +97,12 @@ void Render() {
         }
     } else {
         Maze@ maze = mazes[1];
+
+        dimX = maze.width;
+        dimY = maze.height;
+
+        blockWidth  = float(w) / dimX;
+        blockHeight = float(h) / dimY;
 
         nvg::StrokeWidth(S_WallThickness);
         nvg::StrokeColor(S_WallColor);
@@ -118,25 +137,28 @@ void Render() {
         nvg::StrokeWidth(S_GridThickness);
         nvg::StrokeColor(S_GridColor);
         nvg::BeginPath();
-        for (uint i = 1; i < S_DimensionX; i++) {
+
+        for (uint i = 1; i < dimX; i++) {
             const float blockX = x + blockWidth * i;
             nvg::MoveTo(vec2(blockX, y));
             nvg::LineTo(vec2(blockX, y + h));
         }
-        for (uint i = 1; i < S_DimensionY; i++) {
+
+        for (uint i = 1; i < dimY; i++) {
             const float blockY = y + blockHeight * i;
             nvg::MoveTo(vec2(x,     blockY));
             nvg::LineTo(vec2(x + w, blockY));
         }
+
         nvg::Stroke();
     }
 
     if (S_Coords) {
-        for (uint i = 0; i < S_DimensionX; i++) {
-            for (uint j = 0; j < S_DimensionY; j++) {
-                nvg::FillColor(S_FontColor);
+        for (uint i = 0; i < dimX; i++) {
+            for (uint j = 0; j < dimY; j++) {
                 nvg::FontFace(font);
                 nvg::FontSize(S_FontSize);
+                nvg::FillColor(S_FontColor);
                 nvg::TextAlign(nvg::Align::Middle | nvg::Align::Center);
                 nvg::Text(vec2(x + blockWidth * (i + 0.5f), y + blockHeight * (j + 0.5f)), tostring(i) + "," + j);
             }
