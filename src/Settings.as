@@ -1,5 +1,5 @@
 // c 2024-06-25
-// m 2024-06-26
+// m 2024-06-27
 
 [Setting category="General" name="Enabled"]
 bool S_Enabled = true;
@@ -27,7 +27,7 @@ MazeType S_Type = MazeType::Blocked;
 vec4 S_BlockColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 [Setting category="Style" name="Wall thickness" min=0.0f max=10.0f]
-float S_WallThickness = 1.0f;
+float S_WallThickness = 3.0f;
 
 [Setting category="Style" name="Wall color" color]
 vec4 S_WallColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -40,6 +40,21 @@ float S_GridThickness = 0.2f;
 
 [Setting category="Style" name="Grid color" color]
 vec4 S_GridColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+[Setting category="Style" name="Show coordinates"]
+bool S_Coords = false;
+
+[Setting category="Style" name="Font style"]
+Font S_Font = Font::DroidSansBold;
+
+[Setting category="Style" name="Font size" min=8 max=72]
+int S_FontSize = 20;
+
+[Setting category="Style" name="Font color" color]
+vec4 S_FontColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+[Setting category="Style" name="Show border"]
+bool S_Border = true;
 
 [Setting category="Style" name="Border thickness" min=0 max=10]
 float S_BorderThickness = 3.0f;

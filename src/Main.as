@@ -1,16 +1,17 @@
 // c 2024-06-25
-// m 2024-06-26
+// m 2024-06-27
 
 Maze@[]      mazes;
-vec4[]       randomColors;
+// vec4[]       randomColors;
 const float  scale = UI::GetScale();
 const string title = "\\$FFF" + Icons::ThLarge + "\\$G Maze Generator";
 
 void Main() {
     LoadMazes("test.json");
+    ChangeFont();
 
-    for (uint i = 0; i < 64; i++)
-        randomColors.InsertLast(RandomColor());
+    // for (uint i = 0; i < 64; i++)
+    //     randomColors.InsertLast(RandomColor());
 }
 
 void OnSettingsChanged() {
@@ -19,6 +20,9 @@ void OnSettingsChanged() {
 
     if (S_DimensionY < 1)
         S_DimensionY = 1;
+
+    if (currentFont != S_Font)
+        ChangeFont();
 }
 
 void Render() {
@@ -33,8 +37,8 @@ void Render() {
     int displayWidth = Draw::GetWidth();
     int displayHeight = Draw::GetHeight();
 
-    int x = int(S_X * displayWidth);
-    int y = int(S_Y * displayHeight);
+    int x = Round(S_X * displayWidth);
+    int y = Round(S_Y * displayHeight);
     int w = S_Width;
     int h = S_Height;
 
@@ -43,8 +47,8 @@ void Render() {
                     UI::WindowFlags::NoSavedSettings |
                     UI::WindowFlags::NoScrollbar;
 
-        UI::SetNextWindowPos(int(x / scale), int(y / scale));
-        UI::SetNextWindowSize(int(w / scale), int(h / scale));
+        UI::SetNextWindowPos(Round(x / scale), Round(y / scale));
+        UI::SetNextWindowSize(Round(w / scale), Round(h / scale));
 
         UI::Begin(Icons::ArrowsAlt + " Maze Generator", flags);
             vec2 pos = UI::GetWindowPos();
@@ -53,8 +57,8 @@ void Render() {
 
         S_X = pos.x / displayWidth;
         S_Y = pos.y / displayHeight;
-        S_Width = int(size.x);
-        S_Height = int(size.y);
+        S_Width = Round(size.x);
+        S_Height = Round(size.y);
     }
 
     // background
@@ -69,31 +73,47 @@ void Render() {
     const float blockWidth  = float(w) / S_DimensionX;
     const float blockHeight = float(h) / S_DimensionY;
 
-    // square centers
-    // for (uint i = 0; i < S_DimensionX; i++) {
-    //     for (uint j = 0; j < S_DimensionY; j++) {
-    //         nvg::FillColor(randomColors[((i * S_DimensionY) + j) % randomColors.Length]);
-    //         nvg::BeginPath();
-    //         nvg::Circle(vec2(x + blockWidth * (i + 0.5f), y + blockHeight * (j + 0.5f)), 10.0f);
-    //         nvg::Fill();
-    //     }
-    // }
-
     // blocks/walls
     if (S_Type == MazeType::Blocked) {
         Maze@ maze = mazes[0];
 
-        for (uint i = 0; i < maze.data.Length; i++) {
-            const uint blockX = maze.data[i][0];
-            const uint blockY = maze.data[i][1];
+        nvg::FillColor(S_BlockColor);
 
-            nvg::FillColor(randomColors[i % randomColors.Length]);
+        for (uint i = 0; i < maze.data.Length; i++) {
             nvg::BeginPath();
-            nvg::Rect(x + (blockX * blockWidth), y + (blockY * blockHeight), blockWidth, blockHeight);
+            nvg::Rect(x + blockWidth * maze.data[i][0], y + blockHeight * maze.data[i][1], blockWidth, blockHeight);
             nvg::Fill();
         }
     } else {
-        ;
+        Maze@ maze = mazes[1];
+
+        nvg::StrokeWidth(S_WallThickness);
+        nvg::StrokeColor(S_WallColor);
+        nvg::BeginPath();
+
+        for (uint i = 1; i < maze.width; i++) {
+            for (uint j = 0; j < maze.height; j++) {
+                if (maze.data.Find({ i - 1, j, i, j }) > -1)
+                    continue;
+
+                const float lineX = x + blockWidth * i;
+                nvg::MoveTo(vec2(lineX, y + blockHeight * j));
+                nvg::LineTo(vec2(lineX, y + blockHeight * (j + 1)));
+            }
+        }
+
+        for (uint i = 0; i < maze.width; i++) {
+            for (uint j = 1; j < maze.height; j++) {
+                if (maze.data.Find({ i, j - 1, i, j }) > -1)
+                    continue;
+
+                const float lineY = y + blockHeight * j;
+                nvg::MoveTo(vec2(x + blockWidth * i,       lineY));
+                nvg::LineTo(vec2(x + blockWidth * (i + 1), lineY));
+            }
+        }
+
+        nvg::Stroke();
     }
 
     if (S_Grid) {
@@ -101,25 +121,40 @@ void Render() {
         nvg::StrokeColor(S_GridColor);
         nvg::BeginPath();
         for (uint i = 1; i < S_DimensionX; i++) {
-            nvg::MoveTo(vec2(x + (blockWidth * i), y));
-            nvg::LineTo(vec2(x + (blockWidth * i), y + h));
+            const float blockX = x + blockWidth * i;
+            nvg::MoveTo(vec2(blockX, y));
+            nvg::LineTo(vec2(blockX, y + h));
         }
         for (uint i = 1; i < S_DimensionY; i++) {
-            nvg::MoveTo(vec2(x,     y + (blockHeight * i)));
-            nvg::LineTo(vec2(x + w, y + (blockHeight * i)));
+            const float blockY = y + blockHeight * i;
+            nvg::MoveTo(vec2(x,     blockY));
+            nvg::LineTo(vec2(x + w, blockY));
         }
         nvg::Stroke();
     }
 
-    // border
-    nvg::StrokeWidth(S_BorderThickness);
-    nvg::StrokeColor(S_BorderColor);
-    nvg::BeginPath();
-    nvg::Rect(
-        vec2(x, y),
-        vec2(w, h)
-    );
-    nvg::Stroke();
+    if (S_Coords) {
+        for (uint i = 0; i < S_DimensionX; i++) {
+            for (uint j = 0; j < S_DimensionY; j++) {
+                nvg::FillColor(S_FontColor);
+                nvg::FontFace(font);
+                nvg::FontSize(S_FontSize);
+                nvg::TextAlign(nvg::Align::Middle | nvg::Align::Center);
+                nvg::Text(vec2(x + blockWidth * (i + 0.5f), y + blockHeight * (j + 0.5f)), tostring(i) + "," + j);
+            }
+        }
+    }
+
+    if (S_Border) {
+        nvg::StrokeWidth(S_BorderThickness);
+        nvg::StrokeColor(S_BorderColor);
+        nvg::BeginPath();
+        nvg::Rect(
+            vec2(x, y),
+            vec2(w, h)
+        );
+        nvg::Stroke();
+    }
 }
 
 void RenderMenu() {
