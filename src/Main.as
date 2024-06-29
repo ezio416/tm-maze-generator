@@ -1,5 +1,5 @@
 // c 2024-06-25
-// m 2024-06-27
+// m 2024-06-29
 
 Maze@[]      mazes;
 const string savedFile = IO::FromStorageFolder("saved.json");
@@ -10,13 +10,17 @@ void Main() {
     LoadMazes(savedFile);
     ChangeFont();
 
-    // Maze@ random = Generator::Random(MazeType::Blocked, 5, 5);
-    // print(random);
-    // mazes[0] = random;
 
-    Maze@ random = Generator::Random(MazeType::Walled, 5, 5);
-    print(random);
-    mazes[1] = random;
+    if (S_Type == MazeType::Blocked) {
+        Maze@ maze = Generator::Random(MazeType::Blocked, 5, 5);
+        print(maze);
+        mazes[0] = maze;
+    } else {
+        // Maze@ maze = Generator::Random(MazeType::Walled, 5, 5);
+        Maze@ maze = Generator::WalledKruskal(10, 10);
+        print(maze);
+        mazes[1] = maze;
+    }
 }
 
 void OnSettingsChanged() {
@@ -76,11 +80,8 @@ void Render() {
         nvg::Fill();
     }
 
-    uint dimX = S_DimensionX;
-    uint dimY = S_DimensionY;
-
-    float blockWidth  = float(w) / dimX;
-    float blockHeight = float(h) / dimY;
+    uint dimX, dimY;
+    float blockWidth, blockHeight;
 
     // blocks/walls
     if (S_Type == MazeType::Blocked) {
