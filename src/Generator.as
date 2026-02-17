@@ -1,6 +1,3 @@
-// c 2024-06-27
-// m 2024-06-29
-
 namespace Generator {
     class Cell {
         Cell@ parent;

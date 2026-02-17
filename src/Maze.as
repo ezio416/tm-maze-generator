@@ -1,6 +1,3 @@
-// c 2024-06-26
-// m 2024-06-26
-
 enum MazeType {
     Blocked,
     Walled

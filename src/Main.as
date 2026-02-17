@@ -1,6 +1,3 @@
-// c 2024-06-25
-// m 2024-06-29
-
 Maze@[]      mazes;
 const string savedFile = IO::FromStorageFolder("saved.json");
 const float  scale     = UI::GetScale();
