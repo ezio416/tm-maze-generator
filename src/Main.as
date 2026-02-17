@@ -1,6 +1,5 @@
 Maze@[]      mazes;
 const string savedFile = IO::FromStorageFolder("saved.json");
-const float  scale     = UI::GetScale();
 const string title     = "\\$FFF" + Icons::ThLarge + "\\$G Maze Generator";
 
 void Main() {
@@ -48,6 +47,8 @@ void Render() {
     ) {
         return;
     }
+
+    const float scale = UI::GetScale();
 
     int displayWidth = Display::GetWidth();
     int displayHeight = Display::GetHeight();
