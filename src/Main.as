@@ -7,7 +7,6 @@ void Main() {
     LoadMazes(savedFile);
     ChangeFont();
 
-
     if (S_Type == MazeType::Blocked) {
         Maze@ maze = Generator::Random(MazeType::Blocked, 5, 5);
         print(maze);
@@ -21,24 +20,34 @@ void Main() {
 }
 
 void OnSettingsChanged() {
-    if (S_DimensionX < 1)
+    if (S_DimensionX < 1) {
         S_DimensionX = 1;
+    }
 
-    if (S_DimensionY < 1)
+    if (S_DimensionY < 1) {
         S_DimensionY = 1;
+    }
 
-    if (currentFont != S_Font)
+    if (currentFont != S_Font) {
         ChangeFont();
+    }
 }
 
 void Render() {
     if (false
-        || !S_Enabled
-        || (S_HideWithGame && !UI::IsGameUIVisible())
-        || (S_HideWithOP && !UI::IsOverlayShown())
-        || mazes.Length < 2
-    )
+        or !S_Enabled
+        or (true
+            and S_HideWithGame
+            and !UI::IsGameUIVisible()
+        )
+        or (true
+            and S_HideWithOP
+            and !UI::IsOverlayShown()
+        )
+        or mazes.Length < 2
+    ) {
         return;
+    }
 
     int displayWidth = Draw::GetWidth();
     int displayHeight = Draw::GetHeight();
@@ -49,9 +58,10 @@ void Render() {
     int h = S_Height;
 
     if (S_MoveResize) {
-        int flags = UI::WindowFlags::NoCollapse |
-                    UI::WindowFlags::NoSavedSettings |
-                    UI::WindowFlags::NoScrollbar;
+        int flags = UI::WindowFlags::NoCollapse
+            | UI::WindowFlags::NoSavedSettings
+            | UI::WindowFlags::NoScrollbar
+        ;
 
         UI::SetNextWindowPos(Round(x / scale), Round(y / scale));
         UI::SetNextWindowSize(Round(w / scale), Round(h / scale));
@@ -97,6 +107,7 @@ void Render() {
             nvg::Rect(x + blockWidth * maze.data[i][0], y + blockHeight * maze.data[i][1], blockWidth, blockHeight);
             nvg::Fill();
         }
+
     } else {
         Maze@ maze = mazes[1];
 
@@ -113,8 +124,9 @@ void Render() {
         // vertical
         for (uint i = 1; i < maze.width; i++) {
             for (uint j = 0; j < maze.height; j++) {
-                if (maze.data.Find({ i - 1, j, i, j }) == -1)
+                if (maze.data.Find({ i - 1, j, i, j }) == -1) {
                     continue;
+                }
 
                 const float lineX = x + blockWidth * i;
                 nvg::MoveTo(vec2(lineX, y + blockHeight * j));
@@ -125,8 +137,9 @@ void Render() {
         // horizontal
         for (uint i = 0; i < maze.width; i++) {
             for (uint j = 1; j < maze.height; j++) {
-                if (maze.data.Find({ i, j - 1, i, j }) == -1)
+                if (maze.data.Find({ i, j - 1, i, j }) == -1) {
                     continue;
+                }
 
                 const float lineY = y + blockHeight * j;
                 nvg::MoveTo(vec2(x + blockWidth * i,       lineY));
@@ -182,6 +195,7 @@ void Render() {
 }
 
 void RenderMenu() {
-    if (UI::MenuItem(title, "", S_Enabled))
+    if (UI::MenuItem(title, "", S_Enabled)) {
         S_Enabled = !S_Enabled;
+    }
 }

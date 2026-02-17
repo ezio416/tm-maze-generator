@@ -14,11 +14,11 @@ void ChangeFont() {
         case Font::DroidSans:     f = nvg::LoadFont("DroidSans.ttf",      true, true); break;
         case Font::DroidSansBold: f = nvg::LoadFont("DroidSans-Bold.ttf", true, true); break;
         case Font::DroidSansMono: f = nvg::LoadFont("DroidSansMono.ttf",  true, true); break;
-        default: break;
     }
 
-    if (f > 1)
+    if (f > 1) {
         font = f;
+    }
 
     currentFont = S_Font;
 }
