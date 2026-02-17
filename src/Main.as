@@ -49,8 +49,8 @@ void Render() {
         return;
     }
 
-    int displayWidth = Draw::GetWidth();
-    int displayHeight = Draw::GetHeight();
+    int displayWidth = Display::GetWidth();
+    int displayHeight = Display::GetHeight();
 
     int x = Round(S_X * displayWidth);
     int y = Round(S_Y * displayHeight);
